@@ -3,7 +3,7 @@
 const { MongoClient } = require('mongodb');
 let db = null
 async function connect(){
-    const uri = "mongodb+srv://admin:%24R00tk1n6%3F@cluster0.416hg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+    const uri = process.env.MONGODB_URI;
     const client = new MongoClient(uri);
     try {
         await client.connect()
