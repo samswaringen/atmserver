@@ -179,6 +179,7 @@ app.post('/token', (req, res) => {
 });
 
 app.post('/number', jsonParser, async(req,res)=>{
+    console.log("req number",req)
     let number = await dal.getNumber(req.body.id)
     console.log("number",number)
     res.send(number)

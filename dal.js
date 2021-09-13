@@ -1,11 +1,11 @@
 const { MongoClient, HostAddress } = require('mongodb');
-const url = 'mongodb://localhost:27017'
+const url = 'mongodb://3.84.14.201:27017'
 
 let db = null
 
 MongoClient.connect(url, {useUnifiedTopology: true}, function(err,client){
     console.log('Connnected!')
-    const dbName = 'badbank'
+    const dbName = 'atm_db'
     db = client.db(dbName)
 })
 
@@ -458,6 +458,7 @@ function editNumber(id, item){
     })
 }
 function getNumber(id){
+    console.log("id in dal:",id)
     return new Promise((resolve,reject)=>{
         const accounts = db
                 .collection('internal')
