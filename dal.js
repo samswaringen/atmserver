@@ -1,13 +1,25 @@
-const { MongoClient, HostAddress } = require('mongodb');
-const url = 'mongodb://3.84.14.201:27017'
 
+
+const { MongoClient } = require('mongodb');
 let db = null
+async function connect(){
+    const uri = "mongodb+srv://admin:%24R00tk1n6%3F@cluster0.416hg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+    const client = new MongoClient(uri);
+    try {
+        await client.connect()
+        listDatabases(client)
+        db = client.db("atm")
+    } catch (e) {
+        console.error(e)
+    } 
+}
+connect()
 
-MongoClient.connect(url, {useUnifiedTopology: true}, function(err,client){
-    console.log('Connnected!')
-    const dbName = 'atm_db'
-    db = client.db(dbName)
-})
+async function listDatabases(client){
+    const databaseList = await client.db().admin().listDatabases();
+    console.log("databases:",databaseList.databases)
+}
+
 
 function create(id,dateTime,routing,name,username,email,password,chkAcctNumber,savAcctNumber){
     console.log(id,name,username,email,password,chkAcctNumber,savAcctNumber )
