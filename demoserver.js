@@ -25,7 +25,7 @@ const refreshSecret = "yxT9xaTJGFL777ZiT6XrjXSOJ8pXDugk8Ic1nkQWOzsjQ5CdLRQswP8Wv
 //load database default level
 console.log("demo server running!!!!")
 //set port for api to 9001
-let port = process.env.NODE_ENV || 'production';
+let port = process.env.PORT || 9001;
 
 const authenticateJWT = (req, res, next) => {
     console.log("headers:", req.headers)
@@ -67,14 +67,6 @@ const getRole = (token)=>{
 
 
 const startServer = async()=>{
-    const configurations = {
-        // Note: You may need sudo to run on port 443
-        production: { ssl: true, port: 443, hostname: '3.84.14.201' },
-        development: { ssl: false, port: 4000, hostname: 'localhost' },
-      };
-    
-    const environment = process.env.NODE_ENV || 'production';
-    const config = configurations[environment];
     const server  = new ApolloServer({ typeDefs, resolvers, context: ({ req }) => {
         let token = req.headers.authorization.split(" ")[1]
         let user = getRole(token)
@@ -88,27 +80,7 @@ const startServer = async()=>{
     app.use(cors())
     app.use(express.static('public'));
     server.applyMiddleware({ app: app, authenticateJWT });
-    let httpServer;
-    if (config.ssl) {
-      // Assumes certificates are in a .ssl folder off of the package root.
-      // Make sure these files are secured.
-      httpServer = https.createServer(
-        {
-          key: fs.readFileSync(`./ssl/server.key`),
-          cert: fs.readFileSync(`./ssl/server.crt`)
-        },
-        app,
-      );
-    } else {
-      httpServer = http.createServer(app);
-    }
-  
-    await new Promise(resolve => httpServer.listen({ port: config.port }, resolve));
-    console.log(
-      '🚀 Server ready at',
-      `http${config.ssl ? 's' : ''}://${config.hostname}:${config.port}${server.graphqlPath}`
-    );
-    return { server, app };
+    app.listen({ port: port })
 }
 startServer()
 
