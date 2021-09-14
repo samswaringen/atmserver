@@ -10,8 +10,8 @@ const expressJwt = require("express-jwt");
  
 const app = express();
 
-const accessSecret = "";
-const refreshSecret = "";
+const accessSecret = process.env.JWT_ACCESS_KEY;
+const refreshSecret = process.env.JWT_REFRESH_KEY;
 
 
 
