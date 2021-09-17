@@ -510,9 +510,6 @@ var resolvers = {
             }
         },
         async editNumberGen(parent, args, context, info){
-            if(!context.user.role || null){
-                return
-            }
             const {id, input} = args
             let account = await dal.editNumber(id,input)
             return input
