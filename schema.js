@@ -260,11 +260,13 @@ const typeDefs = gql`
         createAccount(input : accountInput) : account
         deleteAccount(id : String!) : deleteResponse
         editBalance(id : String!, accountName: String!, input : balancesInput) : account
-        editAccountName(id : String!, name : String!) : account
+        editAccountName(id : String!, firstName : String!, lastName : String!) : account
         editAccountUsername(id : String!, username : String!) : account
         editAccountEmail(id : String!, email : String!) : account
         editAccountPassword(id : String!, password : String!) : account
         editAccountPin(id : String!, pin : String!) : account
+        editPhoneNum(id: String!, phoneNum: Int ) : account
+        editAddress(id: String!, input: addressInput, type: String) : account
         editContactInfo(id:String, input: contactInfoInput) : account
         addCoin(id: String, walletName: String, input: coinInput) : wallet
         editCoin(id: String, walletName: String, coinIndex: Int, balance: Float, input: coinTransInput) : wallet
