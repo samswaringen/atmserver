@@ -10,8 +10,10 @@ const expressJwt = require("express-jwt");
  
 const app = express();
 
+//ADD KEYS FOR JWT TOKEN
 const accessSecret = process.env.JWT_ACCESS_KEY;
 const refreshSecret = process.env.JWT_REFRESH_KEY;
+//END ADD KEYS FOR JWT TOKEN
 
 
 
@@ -224,13 +226,15 @@ var resolvers = {
             if(!context.user.role || null){
                 return
             }
-            const {id, name} = args
+            const {id, firstName, lastName} = args
             let doc = await dal.getOne(id)
-            doc.name = name
+            doc.contact.firstName = firstName
+            doc.contact.lastName = lastName
             dal.editAccount(id, doc)     
             return doc
         },
         async editAccountEmail(parent, args, context, info){
+            console.log("context for edit email", context)
             if(!context.user.role || null){
                 return
             }
@@ -259,6 +263,29 @@ var resolvers = {
             doc.pin = pin
             dal.editAccount(id, doc)    
             return doc 
+        },
+        async editPhoneNum(parent, args, context, info){
+            if(!context.user.role || null){
+                return
+            }
+            const {id, phoneNum} = args
+            let doc = await dal.getOne(id)
+            doc.contact.phoneNum = phoneNum
+            console.log("doc for contact edit",doc)
+            dal.editAccount(id, doc) 
+            return doc
+        },
+        async editAddress(parent, args, context, info){
+            console.log("editAddress running")
+            if(!context.user.role || null){
+                return
+            }
+            const {id, input, type} = args
+            let doc = await dal.getOne(id)
+            doc.contact[type] = input
+            console.log("doc for contact edit",doc)
+            dal.editAccount(id, doc) 
+            return doc
         },
         async editContactInfo(parent, args, context, info){
             if(!context.user.role || null){
@@ -328,7 +355,6 @@ var resolvers = {
             doc.balances[acctType][acctIndex].balance = balance
             doc.accountHistory.push(input)
             dal.editAccount(id, doc)   
-            console.log("returning doc", doc)  
             return doc
         },
         async transferTransaction(parent, args, context, info){
@@ -342,7 +368,6 @@ var resolvers = {
             doc.balances[acctTo][accountToIndex].balance = toBal
             doc.accountHistory.push(input)
             dal.editAccount(id, doc)   
-            console.log("returning doc", doc)  
             return doc
         },
         async transferToSomeone(parent, args, context, info){
