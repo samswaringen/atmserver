@@ -306,7 +306,7 @@ function editAccount(id,item){
 }
 
 function createEmp(id,dateTime,role,name,username,email,password){
-    console.log(id,name,username,email,password)
+    console.log("id,dateTime,role,name,username,email,password",id,dateTime,role,name,username,email,password)
     return new Promise((resolve,reject)=>{
         let collection = db.collection('employees')
         let currentDate = new Date()
