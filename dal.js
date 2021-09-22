@@ -132,6 +132,24 @@ function getOneByUN(username, password){
     })
 }
 
+function getOneByEmail(email){
+    return new Promise((resolve,reject)=>{
+        console.log('getOneByEmail running', email)
+        const accounts = db
+                .collection('accounts')
+                .findOne({email : {$eq:email}},function(err,doc){
+                    if(doc){
+                        err ? reject(err) : resolve(doc)
+                    }else{
+                        doc = {name:`Account doesn't exist!`}
+                        err ? reject(err) : resolve(doc)
+                    }
+                    
+                })
+        
+    })
+}
+
 function getOneForAuth(username, password){
     return new Promise((resolve,reject)=>{
         console.log('getOneForAuth running', username)
@@ -494,4 +512,4 @@ function getAllNumbers(){
     })
 }
 
-module.exports = {create, getAll, getOne, getOneByRouting, getOneByUN, getOneForAuth, getOneForAuthATM, getOneForAuthEmp, getOneByAN, getOneNoPW, getOneByPin, checkName, deleteOne, editAccount, createEmp, getOneEmp, getOneEmpByUN, getAllEmps, deleteOneEmp,editEmployee, getAllData, addToAllData, createNumber, getNumber, getAllNumbers, editNumber, deleteOneNum}
+module.exports = {create, getAll, getOne, getOneByRouting, getOneByUN, getOneByEmail, getOneForAuth, getOneForAuthATM, getOneForAuthEmp, getOneByAN, getOneNoPW, getOneByPin, checkName, deleteOne, editAccount, createEmp, getOneEmp, getOneEmpByUN, getAllEmps, deleteOneEmp,editEmployee, getAllData, addToAllData, createNumber, getNumber, getAllNumbers, editNumber, deleteOneNum}
