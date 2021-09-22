@@ -6,6 +6,7 @@ var dal = require('./dal.js')
 const jwt = require('jsonwebtoken');
 const typeDefs = require('./schema.js')
 const expressJwt = require("express-jwt");
+const { saveCookies } = require('superagent');
 
  
 const app = express();
@@ -95,9 +96,9 @@ var resolvers = {
                 return
             }
          },
-         async  accountNoPW(parent, args, context, info){
+         async accountNoPW(parent, args, context, info){
             console.log("context",context.user)
-            if(context.user.role === "employee" || context.user.role === "admin"){
+            if(context.user.role === "employee" || context.user.role === "admin" || context.user.googleAuth === true ){
                 let account = await dal.getOneNoPW(args.username)
                 return account
             }else{
