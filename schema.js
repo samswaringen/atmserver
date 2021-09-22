@@ -132,6 +132,7 @@ const typeDefs = gql`
         accountByUN(username : String!, password: String!) : account
         accountAuth(username : String!, password: String!) : tokenResponse
         accountNoPW(username : String!) : account
+        accountByEmail(email : String!) : account
         accountByPin(username: String, pin: String) : account
         accountByPinAuth(username: String, pin: String) : account
         accounts : [account]
