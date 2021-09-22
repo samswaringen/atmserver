@@ -98,8 +98,17 @@ var resolvers = {
          },
          async accountNoPW(parent, args, context, info){
             console.log("context",context.user)
-            if(context.user.role === "employee" || context.user.role === "admin" || context.user.googleAuth === true ){
+            if(context.user.role === "employee" || context.user.role === "admin" ){
                 let account = await dal.getOneNoPW(args.username)
+                return account
+            }else{
+                return
+            }
+         },
+         async accountByEmail(parent, args, context, info){
+            console.log("context",context.user)
+            if(context.user.googleAuth === true){
+                let account = await dal.getOneByEmail(args.email)
                 return account
             }else{
                 return
