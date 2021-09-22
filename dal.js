@@ -22,7 +22,6 @@ async function listDatabases(client){
 
 
 function create(id,dateTime,routing,name,username,email,password,chkAcctNumber,savAcctNumber){
-    console.log(id,name,username,email,password,chkAcctNumber,savAcctNumber )
     return new Promise((resolve,reject)=>{
         let collection = db.collection('accounts')
         const doc = {
@@ -60,7 +59,6 @@ function create(id,dateTime,routing,name,username,email,password,chkAcctNumber,s
                 {transID : `${id}opensave`, username: username, dateTime:dateTime, info : {acctType: "savings",acctNumber: savAcctNumber, type:'deposit',amount:0, newBalance: 0}}
             ]
         }
-        console.log("doc:",doc)
         collection.insertOne(doc, {w:1}, function(err,result){
             err ? reject(err) : resolve(doc)
         })
@@ -139,6 +137,7 @@ function getOneByEmail(email){
                 .collection('accounts')
                 .findOne({email : {$eq:email}},function(err,doc){
                     if(doc){
+        
                         err ? reject(err) : resolve(doc)
                     }else{
                         doc = {name:`Account doesn't exist!`}
@@ -156,38 +155,50 @@ function getOneForAuth(username, password){
         const accounts = db
                 .collection('accounts')
                 .findOne({username : {$eq:username},password : {$eq:password}},function(err,doc){
-                    console.log("doc:",doc)
                     if(doc){
                         let newDoc = {exists:true, username:username, role: doc.role }
                         doc = newDoc
-                        console.log("doc",doc)
                         err ? reject(err) : resolve(doc)
                     }else{
                         let newDoc = {exists:false, username:null, role: null }
                         doc = newDoc
-                        console.log("doc",doc)
                         err ? reject(err) : resolve(doc)
                     }  
                 })  
     })
 }
 
+function getOneForGoogleAuth(email){
+    return new Promise((resolve,reject)=>{
+        console.log('getOneForGoogleAuth running', email)
+        const accounts = db
+                .collection('accounts')
+                .findOne({email : {$eq:email}},function(err,doc){
+                    if(doc){
+                        let newDoc = {exists:true, username:doc.username, role: doc.role }
+                        doc = newDoc
+                        err ? reject(err) : resolve(doc)
+                    }else{
+                        let newDoc = {exists:false, username:null, role: null }
+                        doc = newDoc
+                        err ? reject(err) : resolve(doc)
+                    }  
+                })  
+    })
+}
 function getOneForAuthEmp(username, password){
     return new Promise((resolve,reject)=>{
         console.log('getOneForAuth running', username)
         const accounts = db
                 .collection('employees')
                 .findOne({username : {$eq:username},password : {$eq:password}},function(err,doc){
-                    console.log("doc:",doc)
                     if(doc){
                         let newDoc = {exists:true, username:username, role: doc.role }
                         doc = newDoc
-                        console.log("doc",doc)
                         err ? reject(err) : resolve(doc)
                     }else{
                         let newDoc = {exists:false, username:null, role: null }
                         doc = newDoc
-                        console.log("doc",doc)
                         err ? reject(err) : resolve(doc)
                     }  
                 })  
@@ -200,16 +211,13 @@ function getOneForAuthATM(username, pin){
         const accounts = db
                 .collection('accounts')
                 .findOne({username : {$eq:username},pin : {$eq:pin}},function(err,doc){
-                    console.log("doc:",doc)
                     if(doc){
                         let newDoc = {exists:true, username:username, role: doc.role }
                         doc = newDoc
-                        console.log("doc",doc)
                         err ? reject(err) : resolve(doc)
                     }else{
                         let newDoc = {exists:false, username:null, role: null }
                         doc = newDoc
-                        console.log("doc",doc)
                         err ? reject(err) : resolve(doc)
                     }  
                 })  
@@ -221,7 +229,6 @@ function getOneByAN(acctNumber){
         const accounts = db
                 .collection('accounts')
                 .findOne({acctNumber : {$eq:acctNumber.acctNumber}},function(err,doc){
-                    console.log("doc",doc)
                     if(doc){
                         err ? reject(err) : resolve(doc)
                     }else{
@@ -239,7 +246,7 @@ function getOneNoPW(username){
         const accounts = db
                 .collection('accounts')
                 .findOne({username : {$eq:username}},function(err,doc){
-                    console.log("doc",doc)
+    
                     if(doc){
                         err ? reject(err) : resolve(doc)
                     }else{
@@ -257,7 +264,7 @@ function getOneByPin(username, pin){
         const accounts = db
                 .collection('accounts')
                 .findOne({username : {$eq:username}, pin : {$eq:pin}},function(err,doc){
-                    console.log("doc",doc)
+    
                     if(doc){
                         err ? reject(err) : resolve(doc)
                     }else{
@@ -275,7 +282,7 @@ function checkName(username){
         const accounts = db
                 .collection('accounts')
                 .findOne({username : {$eq:username}},function(err,doc){
-                    console.log("doc",doc)
+    
                     if(doc){
                         let doc = true
                         err ? reject(err) : resolve(doc)
@@ -294,7 +301,7 @@ function deleteOne(id){
         const accounts = db
                 .collection('accounts')
                 .deleteOne({id : {$eq:id}},function(err,doc){
-                    console.log("doc",doc)
+    
                     if(doc.deletedCount > 0){
                         doc = true
                         err ? reject(err) : resolve(doc)
@@ -324,7 +331,6 @@ function editAccount(id,item){
 }
 
 function createEmp(id,dateTime,role,name,username,email,password){
-    console.log("id,dateTime,role,name,username,email,password",id,dateTime,role,name,username,email,password)
     return new Promise((resolve,reject)=>{
         let collection = db.collection('employees')
         let currentDate = new Date()
@@ -337,7 +343,6 @@ function createEmp(id,dateTime,role,name,username,email,password){
 }
 function getOneEmp(id){
     return new Promise((resolve,reject)=>{
-        console.log('getOneEmp running', id)
         const accounts = db
                 .collection('employees')
                 .findOne({id : {$eq:id}},function(err,doc){
@@ -358,7 +363,7 @@ function getOneEmpByUN(username, password){
         const accounts = db
                 .collection('employees')
                 .findOne({username : {$eq:username},password : {$eq:password}},function(err,doc){
-                    console.log("doc",doc)
+    
                     if(doc){
                         err ? reject(err) : resolve(doc)
                     }else{
@@ -388,7 +393,7 @@ function deleteOneEmp(id){
         const accounts = db
                 .collection('employees')
                 .deleteOne({id : {$eq:id}},function(err,doc){
-                    console.log("doc",doc)
+    
                     if(doc.deletedCount > 0){
                         doc = true
                         err ? reject(err) : resolve(doc)
@@ -433,7 +438,7 @@ function addToAllData(item){
         const accounts = db
                 .collection('allData')
                 .insertOne(item, function(err,doc){
-                    console.log("doc",doc)
+    
                     err ? reject(err) : resolve(doc)
                 })
 
@@ -446,7 +451,7 @@ function createNumber(id, number, equation){
         const accounts = db
                 .collection('internal')
                 .insertOne(item, {w:1}, function(err,doc){
-                    console.log("doc",doc)
+    
                     err ? reject(err) : resolve(doc)
                 })
 
@@ -458,7 +463,7 @@ function deleteOneNum(id){
         const accounts = db
             .collection('internal')
             .deleteOne({id : {$eq:id}},function(err,doc){
-                console.log("doc",doc)
+
                 if(doc.deletedCount > 0){
                     doc = true
                     err ? reject(err) : resolve(doc)
@@ -476,7 +481,7 @@ function editNumber(id, item){
         const accounts = db
                 .collection('internal')
                 .replaceOne({id : {$eq:id}}, item, function(err,doc){
-                    console.log("doc",doc)
+    
                     if(doc){
                         err ? reject(err) : resolve(doc)
                     }else{
@@ -493,7 +498,7 @@ function getNumber(id){
         const accounts = db
                 .collection('internal')
                 .findOne({id : {$eq:id}}, function(err,doc){
-                    console.log("doc",doc)
+    
                     err ? reject(err) : resolve(doc)
                 })
 
@@ -505,11 +510,11 @@ function getAllNumbers(){
                 .collection('internal')
                 .find({})
                 .toArray(function(err,doc){
-                    console.log("doc",doc)
+    
                     err ? reject(err) : resolve(doc)
                 })
 
     })
 }
 
-module.exports = {create, getAll, getOne, getOneByRouting, getOneByUN, getOneByEmail, getOneForAuth, getOneForAuthATM, getOneForAuthEmp, getOneByAN, getOneNoPW, getOneByPin, checkName, deleteOne, editAccount, createEmp, getOneEmp, getOneEmpByUN, getAllEmps, deleteOneEmp,editEmployee, getAllData, addToAllData, createNumber, getNumber, getAllNumbers, editNumber, deleteOneNum}
+module.exports = {create, getAll, getOne, getOneByRouting, getOneByUN, getOneByEmail, getOneForAuth, getOneForAuthATM, getOneForGoogleAuth, getOneForAuthEmp, getOneByAN, getOneNoPW, getOneByPin, checkName, deleteOne, editAccount, createEmp, getOneEmp, getOneEmpByUN, getAllEmps, deleteOneEmp,editEmployee, getAllData, addToAllData, createNumber, getNumber, getAllNumbers, editNumber, deleteOneNum}
