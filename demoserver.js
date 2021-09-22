@@ -88,7 +88,6 @@ var resolvers = {
             return account
          },
          async accountByAN(parent, args, context, info){
-            console.log("acctNumber",args.acctNumber)
             if(context.user.role === "employee" || context.user.role === "admin"){
                 let account = await dal.getOneByAN(args.acctNumber)
                 return account
@@ -97,7 +96,6 @@ var resolvers = {
             }
          },
          async accountNoPW(parent, args, context, info){
-            console.log("context",context.user)
             if(context.user.role === "employee" || context.user.role === "admin" ){
                 let account = await dal.getOneNoPW(args.username)
                 return account
@@ -106,7 +104,6 @@ var resolvers = {
             }
          },
          async accountByEmail(parent, args, context, info){
-            console.log("context",context.user)
             if(context.user.googleAuth === true){
                 let account = await dal.getOneByEmail(args.email)
                 return account
@@ -119,7 +116,6 @@ var resolvers = {
                 return
             }
             let account = await dal.getOneForAuthATM(args.username, args.pin)
-            console.log("found account by pin:",account)
             return account
          },
          async accountByPin(parent, args, context, info){
@@ -127,13 +123,11 @@ var resolvers = {
                 return
             }
             let account = await dal.getOneByPin(args.username, args.pin)
-            console.log("found account by pin:",account)
             return account
          },
          async checkName(parent, args, context, info){
             if(context.user.role === "employee" || context.user.role === "admin"){
                 let check = await dal.checkName(args.username) 
-                console.log("server check", check)
                 return check
             }else{
                 return
@@ -149,7 +143,6 @@ var resolvers = {
         },
         async empAccountByUN(parent, args, context, info){
             if(context.user.role === "employee" || context.user.role === "admin"){
-                console.log("username",args.username)
                 let empAccount = await dal.getOneEmpByUN(args.username, args.password)
                 return empAccount
             }else{
@@ -193,7 +186,6 @@ var resolvers = {
                 return
             }
             const {input} = args
-            console.log("input:", input)
             let account = await dal.create(
                 input.id,
                 input.routing,
@@ -223,7 +215,6 @@ var resolvers = {
             let doc = await dal.getOne(id)
             let index;
             doc.map((item,i)=>{
-                console.log("item:",item)
                 if(item.accountName === accountName){
                     index = i
                 }
@@ -244,7 +235,6 @@ var resolvers = {
             return doc
         },
         async editAccountEmail(parent, args, context, info){
-            console.log("context for edit email", context)
             if(!context.user.role || null){
                 return
             }
@@ -281,19 +271,17 @@ var resolvers = {
             const {id, phoneNum} = args
             let doc = await dal.getOne(id)
             doc.contact.phoneNum = phoneNum
-            console.log("doc for contact edit",doc)
+
             dal.editAccount(id, doc) 
             return doc
         },
         async editAddress(parent, args, context, info){
-            console.log("editAddress running")
             if(!context.user.role || null){
                 return
             }
             const {id, input, type} = args
             let doc = await dal.getOne(id)
             doc.contact[type] = input
-            console.log("doc for contact edit",doc)
             dal.editAccount(id, doc) 
             return doc
         },
@@ -304,7 +292,6 @@ var resolvers = {
             const {id, input} = args
             let doc = await dal.getOne(id)
             doc.contact = input
-            console.log("doc for contact edit",doc)
             dal.editAccount(id, doc) 
             return doc
         },
@@ -360,7 +347,6 @@ var resolvers = {
                 return
             }
             const {id, balance, input, acctIndex, acctType} = args
-            console.log("inside add trans")
             let doc = await dal.getOne(id)
             doc.balances[acctType][acctIndex].balance = balance
             doc.accountHistory.push(input)
@@ -372,7 +358,6 @@ var resolvers = {
                 return
             }
             const {id, acctFrom, accountFromIndex, fromBal, acctTo, accountToIndex, toBal, input} = args
-            console.log("inside transfer trans")
             let doc = await dal.getOne(id)
             doc.balances[acctFrom][accountFromIndex].balance = fromBal
             doc.balances[acctTo][accountToIndex].balance = toBal
@@ -385,7 +370,6 @@ var resolvers = {
                 return
             }
             const {id, dateTime, routing, acctNumber, amount, fromAcct, transID, fromAcctType, fromAcctIndex} = args
-            console.log("inside transfer to someone", id, routing, acctNumber, amount, fromAcct, transID)
             let send = await dal.getOne(id)
             let receive = await dal.getOneByRouting(routing)
             let ok = Boolean(receive.id)
@@ -400,14 +384,12 @@ var resolvers = {
                             if(account.acctNumber === acctNumber){
                                 key = item
                                 toAcctIndex = index
-                                console.log("key",key, "toAcctIndex", toAcctIndex)
                                 return
                             }
                         })
                     }
                     
                 })
-                console.log("key outside",key)
                 let recieveBalance = await receive.balances[key][toAcctIndex].balance + amount
                 let sendInput = {
                     transID: transID,
@@ -438,7 +420,6 @@ var resolvers = {
                 }
                 receive.balances[key][toAcctIndex].balance = recieveBalance
                 receive.accountHistory.push(receiveInput)
-                console.log("final receive account before send", receive)
                 dal.editAccount(receive.id, receive) 
             }    
             return {ok}
@@ -490,7 +471,6 @@ var resolvers = {
             const {id, input, acctType} = args
             let doc = await dal.getOne(id)
             doc.balances[acctType].push(input)
-            console.log("doc.balances.coinWallets:", doc.balances.coinWallets)
             dal.editAccount(id, doc)
             return doc
         },
@@ -516,7 +496,6 @@ var resolvers = {
         async addClock(parent, args, context, info){
             if(context.user.role === "employee" || context.user.role === "admin"){
                 const {id, clockedStatus, input} = args
-                console.log("empAccount:",id)
                 let doc = await dal.getOneEmp(id)
                 doc.clockedStatus = clockedStatus
                 doc.workHistory.push(input)
@@ -537,7 +516,6 @@ var resolvers = {
         async createNumberGen(parent, args, context, info){
             if(context.user.role === "admin"){
                 const {input} = args
-                console.log("input",input)
                 let number = dal.createNumber(input.id, input.number, input.equation)
                 return number
             }else{
@@ -562,9 +540,6 @@ var resolvers = {
     }
     
 }
-
-
-
 
 var server = null;
 const startServer = async()=>{
