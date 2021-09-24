@@ -255,14 +255,15 @@ var resolvers = {
             return doc 
         },
         async editAccountPin(parent, args, context, info){
-            if(!context.user.role || null){
+            if(context.user.googleAuth || context.user.role){
+                const {id, pin} = args
+                let doc = await dal.getOne(id)
+                doc.pin = pin
+                dal.editAccount(id, doc)    
+                return doc 
+            }else if(!context.user.role || null){
                 return
             }
-            const {id, pin} = args
-            let doc = await dal.getOne(id)
-            doc.pin = pin
-            dal.editAccount(id, doc)    
-            return doc 
         },
         async editPhoneNum(parent, args, context, info){
             if(!context.user.role || null){
@@ -286,14 +287,16 @@ var resolvers = {
             return doc
         },
         async editContactInfo(parent, args, context, info){
+            if(context.user.googleAuth || context.user.role){
+                const {id, input} = args
+                let doc = await dal.getOne(id)
+                doc.contact = input
+                dal.editAccount(id, doc) 
+                return doc
+            }
             if(!context.user.role || null){
                 return
-            }
-            const {id, input} = args
-            let doc = await dal.getOne(id)
-            doc.contact = input
-            dal.editAccount(id, doc) 
-            return doc
+            } 
         },
         async addCoin(parent, args, context, info){
             if(context.user.role !== "customer" || null){
